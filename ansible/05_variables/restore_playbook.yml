@@ -1,0 +1,42 @@
+---
+# (1) 방화벽 내리기
+# (2) 서비스 내리기
+# (3) 웹 페이지 파일 삭제
+# (4) 웹 패키지 삭제
+# (5) SELINUX (?)
+
+- name: 플레이북 복원작업
+  hosts: all
+  vars_files:
+  - vars/web.yml
+  tasks: 
+# (1) 방화벽 내리기
+  - name: 방화벽 내리기
+    firewalld: 
+      service: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: disabled
+    loop:
+      - "{{ fw_http }}"
+      - "{{ fw_https }}"
+# (2) 서비스 내리기
+  - name: 서비스 내리기
+    service:
+      name: "{{ svc_web }}"
+      enabled: no
+      state: stopped
+# (3) 웹 페이지 파일 삭제
+  - name: 웹 페이지 파일 삭제
+    file:
+      path: "{{ file_web }}"
+      state: absent
+# (4) 웹 패키지 삭제
+  - name: 웹 패키지 삭제
+    yum: 
+      name: 
+        - "{{ pkg_web_http }}"
+        - "{{ pkg_web_https }}"
+      state: absent
+
+# (5) SELINUX (?)

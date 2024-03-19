@@ -1,0 +1,10 @@
+---
+
+- name: 호스트 또는 그룹 변수 실습 예
+  hosts: all
+  tasks:
+    - name: 패키지 설치
+      yum:
+        name: "{{package}}"
+        state: latest
+  

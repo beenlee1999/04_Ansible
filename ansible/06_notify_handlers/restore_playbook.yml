@@ -1,0 +1,45 @@
+---
+- name: DB 패키지 복원
+  hosts: all
+  gather_facts: no
+  vars_files:
+    - vars/db.yml
+  tasks:
+  - name: DB 서비스 종료
+    service: 
+      name: "{{ svc_db }}"
+      state: stopped
+      enabled: no
+      
+  - name: DB 패키지 삭제
+    yum:
+      name: "{{ pkg_db }}"
+      state: absent
+
+  - name: /etc/my.cnf 파일 삭제
+    file:
+      path: "{{ conf_dest_file }}"
+      state: absent
+
+  
+
+
+
+  #  handlers:
+  #   - name: set db init
+  #     become: true
+  #     expect:
+  #       command: mysql_secure_installation
+  #       responses:
+  #         'Enter current password for root': ''
+  #         'Switch to unix_socket authentication': 'y'
+  #         'Change the root password?': 'y'
+  #         'New password:': 'soldesk1.'
+  #         'Re-enter new password:': 'soldesk1.'
+  #         'Remove anonymous users?': 'y'
+  #         'Disallow root login remotely?': 'y'
+  #         'Remove test database and access to it?': 'y'
+  #         'Reload privilege tables now?': 'y'
+  #     timeout: 1
+
+  

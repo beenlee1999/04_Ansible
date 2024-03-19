@@ -1,0 +1,19 @@
+---
+
+- name: 패키지 복원 작업
+  hosts: all
+  tasks: 
+    - name: remove
+      yum:
+        name: "{{ package }}"
+        state: "absent"
+      vars:
+        package:
+          - httpd
+          - mariadb-server
+          - php
+          - mutt
+        
+      
+        
+    

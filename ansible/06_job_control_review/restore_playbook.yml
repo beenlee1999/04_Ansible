@@ -1,0 +1,51 @@
+---
+- name: 잡 제어 플레이북 예제 복구
+  hosts: webserver
+  vars_files:
+  - vars/vars.yml
+  tasks:
+    - name: 시스템 사양 점검 - 메모리 & 배포판
+      fail:
+        msg: "{{ ansible_hostname }}'s Minimum Memory : 256MB"
+      when: 
+        - ansible_memfree_mb <= 256
+        - ansible_distribution != 'CentOs'
+
+    - name: 웹 서비스 기동 해제 
+      service:
+        name: "{{ item}}"
+        state: stopped
+        enabled: no
+      with_items: 
+      - httpd       
+
+    - name: 방화벽에 포트 해제
+      firewalld:
+        service: http
+        permanent: no
+        immediate: no
+        state: disabled
+
+    - name:  웹서버 설정 삭제
+      # files/index -> /var/www/html/index.html
+      # files/localhost.key -> /etc/pki/tls/private/localhost.key
+      # files/localhost.crt -> /etc/pki/tls/certs/localhost.crt
+      file:
+        path: "{{ item.dest}}"
+        state: absent
+      with_items: "{{ conf_files}}"     
+
+    - name: 패키지 설치 삭제
+      yum:
+        name: "{{ packages }}"
+        state: absent
+      vars:
+        packages:
+          - httpd
+          - mod_ssl
+
+
+
+  
+
+

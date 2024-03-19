@@ -1,0 +1,52 @@
+---
+# (1) 방화벽 서비스 끄기 - http https mysql
+# (2) 서비스 끄기 - httpd, mariadb
+# (3) 서비스 디렉터리 삭제 - /var/www/html
+# (4) 패키지 삭제 - ....
+
+- name: 웹 DB 복구
+  hosts: webservers
+  tasks:
+# (1) 방화벽 서비스 끄기 - http https mysql
+    - name: 방화벽 서비스 끄기 - http https mysql
+      firewalld:
+        service: "{{ item }}"
+        permanent: true
+        immediate: true
+        state: disabled
+      loop:
+      - http
+      - https
+      - mysql
+# (2) 서비스 끄기 - httpd, mariadb
+    - name: 서비스 끄기 - httpd, mariadb
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+# (3) 서비스 디렉터리 삭제 - /var/www/html        
+    - name: 서비스 디렉터리 삭제 - /var/www/html
+      file: 
+        path: /var/www/html
+        state: absent
+# (4) 패키지 삭제 - ....
+    - name: 패키지 삭제
+      yum:  
+        name: 
+          - php
+          - php-mysqlnd
+          - php-pdo
+          - mariadb-server
+          - mariadb
+          - python3-pip
+        state: absent
+
+
+
+
+
+
+
+
+
+# (4) 패키지 삭제 - ....

@@ -1,0 +1,38 @@
+---
+
+- name: remove  small config file
+  file:
+    path: "{{ db_config_path }}"
+    state: absent
+  tags:
+    - dev
+
+- name: remove  large config file
+  file:
+    path: "{{ db_config_path }}"
+    state: absent
+  tags: 
+    - prod
+
+- name: Update motd for development
+  file:
+    path: /etc/motd
+    state: absent
+  tags: 
+    - dev
+
+- name: Update motd for production
+  file:
+    path: /etc/motd
+    state: absent
+  tags:
+    - prod
+
+- name: remove database packages
+  yum: 
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ db_packages }}"
+  tags:
+    - dev
+
